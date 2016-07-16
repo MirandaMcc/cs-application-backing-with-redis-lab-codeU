@@ -79,7 +79,13 @@ public class JedisIndex {
 	 */
 	public Map<String, Integer> getCounts(String term) {
         // FILL THIS IN!
-		return null;
+		Map<String, Integer> wordCount = new HashMap<String, Integer>();
+		Set<String> urlSet = getURLs(term);
+		for (String url: urlSet) {
+			Integer count = getCount(url, term);
+			wordCount.put(url, count);
+		}
+		return wordCount;
 	}
 
     /**
@@ -91,7 +97,8 @@ public class JedisIndex {
 	 */
 	public Integer getCount(String url, String term) {
         // FILL THIS IN!
-		return null;
+		String key = termCounterKey(url);
+		return new Integer(jedis.hget(key,term));
 	}
 
 
@@ -103,6 +110,7 @@ public class JedisIndex {
 	 */
 	public void indexPage(String url, Elements paragraphs) {
         // FILL THIS IN!
+		return;
 	}
 
 	/**
