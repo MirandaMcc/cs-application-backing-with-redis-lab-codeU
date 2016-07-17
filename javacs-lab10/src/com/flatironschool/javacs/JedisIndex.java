@@ -68,7 +68,8 @@ public class JedisIndex {
 	 */
 	public Set<String> getURLs(String term) {
         // FILL THIS IN!
-		return null;
+		Set<String> urls = jedis.smembers(urlSetKey(term));
+		return urls;
 	}
 
     /**
@@ -118,11 +119,15 @@ public class JedisIndex {
 		//delete old data if exists
 		String key = termCounterKey(url);
 		jedis.del(key);
+
+		//add new data w/ transaction 
+		Transaction trans = jedis.multi();
 		for (String term: counter.keySet()){
 			Integer count = counter.get(term);
-			jedis.hset(key,term,count.toString());
-			jedis.sadd(urlSetKey(term), url);
+			trans.hset(key,term,count.toString());
+			trans.sadd(urlSetKey(term), url);
 		}
+		trans.exec(); 
 
 	}
 
