@@ -110,7 +110,20 @@ public class JedisIndex {
 	 */
 	public void indexPage(String url, Elements paragraphs) {
         // FILL THIS IN!
-		return;
+		TermCounter counter = new TermCounter(url);
+		counter.processElements(paragraphs); //goes through all paragraphs, not just first one like before
+		//return;
+
+		//update redis database
+		//delete old data if exists
+		String key = termCounterKey(url);
+		jedis.del(key);
+		for (String term: counter.keySet()){
+			Integer count = counter.get(term);
+			jedis.hset(key,term,count.toString());
+			jedis.sadd(urlSetKey(term), url);
+		}
+
 	}
 
 	/**
